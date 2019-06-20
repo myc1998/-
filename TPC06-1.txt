@@ -1,0 +1,23 @@
+ 	include io.inc
+	.model small
+	.stack
+	.data
+
+	.code
+start:  
+      mov dx,28bh          ;设8255为C口输入,A口输出
+      mov al,8bh
+      out dx,al
+inout:  mov dx,28ah            ;从C口输入一数据
+      in al,dx
+      mov dx,288h             ;从A口输出刚才自C口
+      out dx,al               ;所输入的数据
+      mov dl,0ffh                ;判断是否有按键
+      mov ah,06h
+      int 21h
+      jz inout                ;若无,则继续自C口输入,A口输出
+      mov ah,4ch              ;否则返回
+      int 21h
+
+.exit 0
+end start

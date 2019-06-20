@@ -1,0 +1,84 @@
+ include io.inc
+.model small
+.stack
+.data
+	counter byte 0	;中断次数记录单元
+	num byte 01h
+.code
+start:
+      mov ax,@data
+	mov ds,ax
+	
+	mov ax,350bh	;获取原中断向量表项
+	int 21h
+	push es		
+	push bx
+	cli			;close
+	push ds
+	mov ax,seg new0bh	;设置新中断向量表项
+	mov ds,ax
+	mov dx,offset new0bh
+	mov ax,250bh
+	int 21h
+	pop ds
+	in al,21h        ;读出IMR
+	push ax		;保存原IMR内容
+	and al,0f7h      ;允许IRQ3中断其它内容不变
+	out 21h,al		;设置新IMR内容
+	mov counter,0	;设置中断次数初值
+					;开中断
+	;主程序完成中断服务程序设置，可以处理其他事务
+;写入控制字
+	mov dx,28bh
+	mov al,0a9h
+	;mov al,0bh
+	out dx,al
+;写入pc6
+	mov dx,28bh
+	mov al,0dh
+	out dx,al
+	sti
+start1:
+	cmp counter,8	;本例的主程序仅循环等待中断
+	jb start1		;中断5次退出
+	cli				;关中断
+	pop ax			;恢复IMR
+	out 21h,al
+	pop dx 			;恢复原中断向量表项
+	pop ds
+	mov ax,250bh
+	int 21h
+	sti				;开中断
+	.exit 0
+	;中断服务程序
+new0bh proc
+	sti				;开中断
+	push ax			;保护寄存器
+	push si			;
+	push ds			;
+	mov ax,@data		;外部随机产生中断，DS也不确定，所以必须设置DS
+	mov ds,ax
+;向A口写入数据
+	push ax
+	push dx
+	mov dx,288h
+	mov al,num
+	out dx,al
+	shl num,1
+	mov al,num
+	call dispuib
+	pop dx
+	pop ax
+	inc counter
+	mov al,20h			;发送EOI命令
+	out 20h,al			
+	pop ds 			;恢复寄存器
+	pop si
+	pop ax
+	iret				;中断返回
+new0bh endp
+
+	
+	
+
+end start
