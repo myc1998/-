@@ -1,29 +1,22 @@
- ;Ö§³Ö×Ó³ÌĞò¿âµÄ¼ò»¯¶ÎÔ´³ÌĞò¸ñÊ½
+ ;æ”¯æŒå­ç¨‹åºåº“çš„ç®€åŒ–æ®µæºç¨‹åºæ ¼å¼
     include io.inc
-	.model small	; ¶¨Òå³ÌĞòµÄ´æ´¢Ä£Ê½
-	.stack	; ¶¨Òå¶ÑÕ»¶Î£¨Ä¬ÈÏÊÇ1KB¿Õ¼ä£©
-	.data	;Êı¾İ¶Î
+	.model small	; å®šä¹‰ç¨‹åºçš„å­˜å‚¨æ¨¡å¼
+	.stack	; å®šä¹‰å †æ ˆæ®µï¼ˆé»˜è®¤æ˜¯1KBç©ºé—´ï¼‰
+	.data	;æ•°æ®æ®µ
 
-	.code	;´úÂë¶Î
+	.code	;ä»£ç æ®µ
 start:	
 	mov ax,@data
 	mov ds,ax
 	
-	mov al,10h	;00 11 000 1 ¿ØÖÆ×Ö
-	mov dx,283h  ;Ğ´8254¿ØÖÆ¶Ë¿Ú
+	mov al,10h	;00 11 000 1 æ§åˆ¶å­—
+	mov dx,283h  ;å†™8254æ§åˆ¶ç«¯å£
 	out dx,al
 	mov ax,3
-	mov dx,280h   ;0ºÅ¼ÆÊıÆ÷
+	mov dx,280h   ;0å·è®¡æ•°å™¨
 	out dx,al	
        mov ah,al
        out dx,al
-call delay
-	mov al,00h   
-	mov dx,283h
-	out dx,al
-	mov dx,280h   
-	in al,dx     ;¶ÁÈ¡¼ÆÊıÆ÷ÀïµÄÖµ
-	call dispuib
 again:
 	call delay
 	mov al,00h
@@ -37,13 +30,13 @@ again:
 			
 	.exit 0
 delay proc
-push cx
-push dx
-mov ah,86h
+        push cx
+        push dx
+        mov ah,86h
 	mov cx,0ffh
-	   mov dx,8480h
-	   int 15h
-pop cx
-pop dx 
+        mov dx,8480h
+        int 15h
+        pop cx
+        pop dx 
 delay endp
 end start
